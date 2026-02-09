@@ -202,5 +202,12 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Local tests with credentials
-local_tests/
+# Local tests
+# Keep tests/docs in repo, but never commit real credentials.
+local_tests/.env
+local_tests/.env.*
+local_tests/config_local.py
+local_tests/config.local.py
+local_tests/config.private.py
+local_tests/*.local.py
+local_tests/*.private.py

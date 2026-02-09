@@ -1,4 +1,4 @@
-# pykwork
+# kwork
 
 Асинхронная обёртка над API фриланс-биржи [kwork.ru](https://kwork.ru/)
 
@@ -21,7 +21,14 @@ import asyncio
 from kwork import Kwork
 
 async def main():
-    api = Kwork(login="login", password="password")
+    api = Kwork(
+        login="login",
+        password="password",
+        # Таймаут на запросы (секунды) или aiohttp.ClientTimeout(...)
+        timeout=30.0,
+        # Ретраи на 5xx/429 и сетевые ошибки (ограниченные попытки)
+        retry_max_attempts=3,
+    )
 
     try:
         me = await api.get_me()

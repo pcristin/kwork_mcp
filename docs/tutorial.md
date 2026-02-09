@@ -1,4 +1,4 @@
-# Pykwork Tutorial
+# Kwork Tutorial
 
 ## Содержание
 
@@ -18,13 +18,19 @@
 ## Установка
 
 ```bash
-pip install pykwork
+pip install kwork
 ```
 
-Для поддержки socks5-прокси:
+Для поддержки socks5-прокси (рекомендуется ставить через extras):
 
 ```bash
-pip install aiohttp_socks
+pip install "kwork[proxy]"
+```
+
+Альтернатива (если ставите зависимость напрямую):
+
+```bash
+pip install aiohttp-socks
 ```
 
 ---

@@ -7,8 +7,8 @@ name = "kwork"
 version = "0.1.1"
 description = "Simple async wrapper for kwork."
 readme = "README.md"
-license = "MIT"
-requires-python = ">=3.14"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
 authors = [
     { name = "kesha1225" },
 ]
@@ -16,14 +16,17 @@ keywords = ["kwork", "freelance", "api", "async", "aiohttp", "bot"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Framework :: AsyncIO",
     "Typing :: Typed",
 ]
 dependencies = [
-    "aiohttp>=3.13.2",
+    "aiohttp>=3.13.3",
     "pydantic>=2.12.5",
     "websockets>=15.0.1",
 ]
@@ -42,11 +45,14 @@ Issues = "https://github.com/kesha1225/pykwork/issues"
 packages = ["kwork", "kwork.schema"]
 
 [tool.setuptools.package-dir]
-kwork = "source"
-"kwork.schema" = "source/schema"
+"" = "source"
+
+[tool.setuptools.package-data]
+# PEP 561 marker file so downstream type checkers pick up inline annotations.
+kwork = ["py.typed"]
 
 [tool.ruff]
-target-version = "py314"
+target-version = "py312"
 line-length = 100
 
 [dependency-groups]
@@ -56,7 +62,7 @@ dev = [
 ]
 
 [tool.basedpyright]
-pythonVersion = "3.14"
+pythonVersion = "3.12"
 typeCheckingMode = "standard"
 reportMissingTypeArgument = "warning"
 reportUnknownArgumentType = false
@@ -66,3 +72,7 @@ reportUnknownParameterType = false
 reportAny = false
 reportImplicitStringConcatenation = false
 reportUnannotatedClassAttribute = false
+
+[tool.pytest.ini_options]
+# Keep credentialed integration checks out of default runs.
+testpaths = ["tests"]
