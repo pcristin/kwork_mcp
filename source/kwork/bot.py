@@ -107,9 +107,14 @@ class KworkBot(KworkClient):
             logger.debug("Connection closed: %s. Reconnecting...", e)
             raise KworkException("WebSocket connection closed") from e
 
-        logger.debug("Received: %s", raw_data)
+        raw_text = (
+            raw_data.decode("utf-8", errors="replace")
+            if isinstance(raw_data, (bytes, bytearray))
+            else str(raw_data)
+        )
+        logger.debug("Received: %s", raw_text)
 
-        event = self._event_parser.parse_raw_event(str(raw_data))
+        event = self._event_parser.parse_raw_event(raw_text)
         if event is None or self._event_parser.should_skip_event(event):
             return None
 

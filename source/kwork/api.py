@@ -59,6 +59,20 @@ def _redact_sensitive(value: str | Any, *, _depth: int = 0) -> Any:
     return value
 
 
+def _format_exception_short(err: BaseException) -> str:
+    """
+    Return a non-empty, low-noise description of an exception.
+
+    Some exceptions (notably asyncio.TimeoutError) have an empty str(), which leads to
+    confusing logs like "...: " with no details.
+    """
+    s = str(err).strip()
+    if s:
+        return f"{type(err).__name__}: {s}"
+    # repr() is almost always informative and non-empty (e.g. TimeoutError()).
+    return f"{type(err).__name__} ({err!r})"
+
+
 class KworkAPI:
     def __init__(
         self,
@@ -417,8 +431,9 @@ class KworkAPI:
                         raise
             except (aiohttp.ClientError, asyncio.TimeoutError) as e:
                 if not enable_retry or attempts >= attempts_limit:
+                    err_desc = _format_exception_short(e)
                     raise KworkRetryExceeded(
-                        f"Request {method.upper()} /{endpoint} failed after {attempts} attempts: {e}",
+                        f"Request {method.upper()} /{endpoint} failed after {attempts} attempts: {err_desc}",
                         attempts=attempts,
                         last_error=e,
                     ) from e

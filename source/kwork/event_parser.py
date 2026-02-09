@@ -2,6 +2,7 @@ import json
 import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
+from urllib.parse import unquote_plus
 
 from kwork.schema import BaseEvent, EventType, Message, Notify
 
@@ -9,6 +10,56 @@ if TYPE_CHECKING:
     from kwork.client import KworkClient
 
 logger = logging.getLogger(__name__)
+
+
+def _load_json_object(text: str) -> dict[str, Any] | None:
+    try:
+        parsed: Any = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None
+
+
+def _parse_event_text_payload(text: Any) -> dict[str, Any] | None:
+    """
+    Websocket payload includes a top-level JSON with a "text" field.
+
+    In practice, "text" can be:
+    - a JSON string, e.g. '{"event":"new_inbox","data":{...}}'
+    - URL-encoded JSON, e.g. '%7B%22event%22%3A...%7D'
+    - empty / non-JSON frames (pings, etc.)
+    """
+    if isinstance(text, dict):
+        return text
+    if not isinstance(text, str):
+        return None
+
+    s = text.strip()
+    if not s:
+        return None
+
+    # Some transports prefix payloads with "data:" (SSE-like).
+    if s.startswith("data:"):
+        s = s[5:].strip()
+        if not s:
+            return None
+
+    parsed = _load_json_object(s)
+    if parsed is not None:
+        return parsed
+
+    # If the payload is URL-encoded JSON, decode it and try again.
+    if "%" in s or "+" in s:
+        decoded = unquote_plus(s).strip()
+        if decoded.startswith("data:"):
+            decoded = decoded[5:].strip()
+        if not decoded:
+            return None
+        parsed = _load_json_object(decoded)
+        if parsed is not None:
+            return parsed
+
+    return None
 
 
 @dataclass
@@ -27,8 +78,14 @@ class EventParser:
 
     def parse_raw_event(self, raw_data: str) -> BaseEvent | None:
         try:
-            json_event = json.loads(raw_data)
-            event_data = json.loads(json_event["text"])
+            json_event: Any = json.loads(raw_data)
+            if not isinstance(json_event, dict):
+                return None
+
+            event_data = _parse_event_text_payload(json_event.get("text"))
+            if event_data is None:
+                return None
+
             return BaseEvent(**event_data)
         except (json.JSONDecodeError, KeyError) as e:
             logger.warning("Failed to parse event: %s", e)
