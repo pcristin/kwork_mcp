@@ -1,0 +1,18 @@
+{
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "standard",
+  "venvPath": ".",
+  "venv": ".venv",
+  "include": ["source"],
+  "exclude": [
+    ".venv",
+    "tests",
+    "examples",
+    "local_tests",
+    "dist",
+    "apk-dump",
+    "kwork.egg-info",
+    "**/__pycache__/**"
+  ],
+  "extraPaths": ["source"]
+}

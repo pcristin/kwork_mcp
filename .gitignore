@@ -211,3 +211,8 @@ local_tests/config.local.py
 local_tests/config.private.py
 local_tests/*.local.py
 local_tests/*.private.py
+
+apk-dump/
+.DS_Store
+local_tests/
+scripts/
