@@ -35,3 +35,17 @@ def test_client_config_invalid_env_boolean_raises() -> None:
                 "KWORK_RELOGIN_ON_AUTH_ERROR": "maybe",
             }
         )
+
+
+def test_client_config_treats_blank_optional_env_values_as_none() -> None:
+    cfg = ClientConfig.from_sources(
+        env={
+            "KWORK_LOGIN": "x",
+            "KWORK_PASSWORD": "y",
+            "KWORK_PROXY": "   ",
+            "KWORK_PHONE_LAST": "",
+        }
+    )
+
+    assert cfg.proxy is None
+    assert cfg.phone_last is None

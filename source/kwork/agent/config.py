@@ -13,6 +13,14 @@ _TRUE_VALUES = {"1", "true", "yes", "on"}
 _FALSE_VALUES = {"0", "false", "no", "off"}
 
 
+def _none_if_blank(value: str | None) -> str | None:
+    if value is None:
+        return None
+    if value.strip() == "":
+        return None
+    return value
+
+
 def _parse_bool(value: str, *, field: str) -> bool:
     normalized = value.strip().lower()
     if normalized in _TRUE_VALUES:
@@ -65,8 +73,10 @@ class ClientConfig:
 
         resolved_login = login if login is not None else env_map.get("KWORK_LOGIN")
         resolved_password = password if password is not None else env_map.get("KWORK_PASSWORD")
-        resolved_phone_last = phone_last if phone_last is not None else env_map.get("KWORK_PHONE_LAST")
-        resolved_proxy = proxy if proxy is not None else env_map.get("KWORK_PROXY")
+        resolved_phone_last = _none_if_blank(
+            phone_last if phone_last is not None else env_map.get("KWORK_PHONE_LAST")
+        )
+        resolved_proxy = _none_if_blank(proxy if proxy is not None else env_map.get("KWORK_PROXY"))
 
         if timeout is None:
             timeout_env = env_map.get("KWORK_TIMEOUT")

@@ -8,6 +8,6 @@ WORKDIR /app
 COPY pyproject.toml README.md LICENSE MANIFEST.in /app/
 COPY source /app/source
 
-RUN pip install --no-cache-dir ".[mcp]"
+RUN pip install --no-cache-dir ".[mcp,proxy]"
 
 ENTRYPOINT ["kwork-agent", "mcp", "serve"]
