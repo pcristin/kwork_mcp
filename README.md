@@ -37,6 +37,12 @@ pip install kwork
 pip install "kwork[proxy]"
 ```
 
+Если нужен MCP-сервер для AI-агентов:
+
+```bash
+pip install "kwork[mcp]"
+```
+
 ## Быстрый старт
 
 ```python
@@ -57,6 +63,61 @@ asyncio.run(main())
 ```
 
 Ещё примеры см. в `examples/` и в [гайде](docs/guide.md).
+
+## CLI / MCP для AI-агентов
+
+Доступны JSON-first CLI команды и MCP stdio server:
+
+```bash
+export KWORK_LOGIN=login
+export KWORK_PASSWORD=password
+
+kwork-agent me
+kwork-agent dialogs list --page 1
+kwork-agent messages send --user-id 123 --text "Hello"
+```
+
+Посмотреть все доступные tools (включая auto-exposed методы):
+
+```bash
+kwork-agent tools list --include-write
+```
+
+Вызвать любой tool напрямую (для полного покрытия):
+
+```bash
+kwork-agent call --tool accept_extras --args-json '{"params":{"orderId":123}}'
+```
+
+Сгенерировать Markdown-справочник tools:
+
+```bash
+kwork-agent tools export-markdown --include-write --output docs/agent-tools.md
+```
+
+Готовый файл в репозитории: [docs/agent-tools.md](docs/agent-tools.md)
+
+Запуск MCP-сервера (stdio):
+
+```bash
+kwork-agent mcp serve
+```
+
+По умолчанию write-tools в MCP отключены. Включить:
+
+```bash
+KWORK_MCP_ENABLE_WRITE_TOOLS=1 kwork-agent mcp serve
+```
+
+### Docker Compose (MCP stdio)
+
+```bash
+cp .env.example .env
+docker compose build kwork-mcp
+docker compose run --rm -T kwork-mcp
+```
+
+`-T` отключает TTY, что обычно лучше для MCP stdio JSON-RPC.
 
 ## Документация
 

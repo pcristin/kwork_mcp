@@ -48,6 +48,13 @@ dependencies = [
 proxy = [
     "aiohttp-socks>=0.10.2",
 ]
+mcp = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+kwork-agent = "kwork.agent.__main__:main"
+kwork-mcp = "kwork.agent.__main__:main_mcp"
 
 [project.urls]
 Homepage = "https://github.com/kesha1225/pykwork"
@@ -58,7 +65,7 @@ Changelog = "https://github.com/kesha1225/pykwork/blob/HEAD/CHANGELOG.md"
 Security = "https://github.com/kesha1225/pykwork/blob/HEAD/SECURITY.md"
 
 [tool.setuptools]
-packages = ["kwork", "kwork.schema"]
+packages = ["kwork", "kwork.agent", "kwork.schema"]
 
 [tool.setuptools.package-dir]
 "" = "source"

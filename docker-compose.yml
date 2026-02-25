@@ -1,0 +1,18 @@
+services:
+  kwork-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    image: kwork-mcp:local
+    stdin_open: true
+    tty: false
+    restart: "no"
+    environment:
+      KWORK_LOGIN: ${KWORK_LOGIN}
+      KWORK_PASSWORD: ${KWORK_PASSWORD}
+      KWORK_PHONE_LAST: ${KWORK_PHONE_LAST:-}
+      KWORK_PROXY: ${KWORK_PROXY:-}
+      KWORK_TIMEOUT: ${KWORK_TIMEOUT:-30}
+      KWORK_RETRY_MAX_ATTEMPTS: ${KWORK_RETRY_MAX_ATTEMPTS:-1}
+      KWORK_RELOGIN_ON_AUTH_ERROR: ${KWORK_RELOGIN_ON_AUTH_ERROR:-0}
+      KWORK_MCP_ENABLE_WRITE_TOOLS: ${KWORK_MCP_ENABLE_WRITE_TOOLS:-0}
